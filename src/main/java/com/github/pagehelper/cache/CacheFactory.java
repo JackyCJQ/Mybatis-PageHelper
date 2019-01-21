@@ -46,9 +46,11 @@ public abstract class CacheFactory {
     public static <K, V> Cache<K, V> createCache(String sqlCacheClass, String prefix, Properties properties) {
         if (StringUtil.isEmpty(sqlCacheClass)) {
             try {
+                //如果缓存为空默认使用google的缓存
                 Class.forName("com.google.common.cache.Cache");
                 return new GuavaCache<K, V>(properties, prefix);
             } catch (Throwable t) {
+                //如果没有引用google的依赖则只用自己简单定义的缓存实现
                 return new SimpleCache<K, V>(properties, prefix);
             }
         } else {
@@ -58,6 +60,7 @@ public abstract class CacheFactory {
                     Constructor<? extends Cache> constructor = clazz.getConstructor(Properties.class, String.class);
                     return constructor.newInstance(properties, prefix);
                 } catch (Exception e) {
+                    //是在不行就构造一个无惨构造器
                     return clazz.newInstance();
                 }
             } catch (Throwable t) {

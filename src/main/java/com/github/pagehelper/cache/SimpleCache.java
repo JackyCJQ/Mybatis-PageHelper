@@ -42,6 +42,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
 
     public SimpleCache(Properties properties, String prefix) {
         CacheBuilder cacheBuilder = new CacheBuilder("SQL_CACHE");
+        //缓存实现类
         String typeClass = properties.getProperty(prefix + ".typeClass");
         if (StringUtil.isNotEmpty(typeClass)) {
             try {
@@ -50,22 +51,27 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                 cacheBuilder.implementation(PerpetualCache.class);
             }
         } else {
+            //默认实现Mybatis的实现
             cacheBuilder.implementation(PerpetualCache.class);
         }
+        //缓存的算法
         String evictionClass = properties.getProperty(prefix + ".evictionClass");
         if (StringUtil.isNotEmpty(evictionClass)) {
             try {
                 cacheBuilder.addDecorator((Class<? extends org.apache.ibatis.cache.Cache>) Class.forName(evictionClass));
             } catch (ClassNotFoundException e) {
+                //默认是先进先出
                 cacheBuilder.addDecorator(FifoCache.class);
             }
         } else {
             cacheBuilder.addDecorator(FifoCache.class);
         }
+        //缓存刷新时间
         String flushInterval = properties.getProperty(prefix + ".flushInterval");
         if (StringUtil.isNotEmpty(flushInterval)) {
             cacheBuilder.clearInterval(Long.parseLong(flushInterval));
         }
+        //缓存大小
         String size = properties.getProperty(prefix + ".size");
         if (StringUtil.isNotEmpty(size)) {
             cacheBuilder.size(Integer.parseInt(size));

@@ -87,6 +87,7 @@ public class PageInfo<T> extends PageSerializable<T> {
      * @param list
      */
     public PageInfo(List<T> list) {
+        //默认8个页面
         this(list, 8);
     }
 
@@ -97,7 +98,9 @@ public class PageInfo<T> extends PageSerializable<T> {
      * @param navigatePages 页码数量
      */
     public PageInfo(List<T> list, int navigatePages) {
+        //调用PageSerializable
         super(list);
+        //如果有分页信息
         if (list instanceof Page) {
             Page page = (Page) list;
             this.pageNum = page.getPageNum();
@@ -150,6 +153,7 @@ public class PageInfo<T> extends PageSerializable<T> {
         if (pages <= navigatePages) {
             navigatepageNums = new int[pages];
             for (int i = 0; i < pages; i++) {
+                //导航页是从1开始
                 navigatepageNums[i] = i + 1;
             }
         } else { //当总页数大于导航页码数时

@@ -28,11 +28,25 @@ package com.github.pagehelper;
  * @author liuzh
  */
 public interface IPage {
-
+    /**
+     * 返回页码数量
+     *
+     * @return
+     */
     Integer getPageNum();
 
+    /**
+     * 分页大小
+     *
+     * @return
+     */
     Integer getPageSize();
 
+    /**
+     * 排序属性
+     *
+     * @return
+     */
     String getOrderBy();
 
 }

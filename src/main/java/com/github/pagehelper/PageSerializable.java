@@ -28,6 +28,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ * 序列化
  * @author liuzh
  */
 public class PageSerializable<T> implements Serializable {
@@ -42,6 +43,7 @@ public class PageSerializable<T> implements Serializable {
 
     public PageSerializable(List<T> list) {
         this.list = list;
+        //如果是分页的数据
         if(list instanceof Page){
             this.total = ((Page)list).getTotal();
         } else {

@@ -36,6 +36,7 @@ import java.util.Properties;
  * @author liuzh
  */
 public abstract class PageMethod {
+    //通过ThreadLocal来解决冲突的吗？
     protected static final ThreadLocal<Page> LOCAL_PAGE = new ThreadLocal<Page>();
     protected static boolean DEFAULT_COUNT = true;
 

@@ -99,16 +99,26 @@ public class Page<E> extends ArrayList<E> implements Closeable {
         this(pageNum, pageSize, count, null);
     }
 
+    /**
+     * 新建分页信息
+     * @param pageNum 分页的数量
+     * @param pageSize 分页的大小
+     * @param count 是否查询总数
+     * @param reasonable 是否分页合理化
+     */
     private Page(int pageNum, int pageSize, boolean count, Boolean reasonable) {
         super(0);
         if (pageNum == 1 && pageSize == Integer.MAX_VALUE) {
+            //配置不执行分页
             pageSizeZero = true;
             pageSize = 0;
         }
         this.pageNum = pageNum;
         this.pageSize = pageSize;
         this.count = count;
+        //计算起止行号
         calculateStartAndEndRow();
+        //计算分页合理
         setReasonable(reasonable);
     }
 
@@ -120,10 +130,12 @@ public class Page<E> extends ArrayList<E> implements Closeable {
     public Page(int[] rowBounds, boolean count) {
         super(0);
         if (rowBounds[0] == 0 && rowBounds[1] == Integer.MAX_VALUE) {
+            //不进行分页
             pageSizeZero = true;
             this.pageSize = 0;
         } else {
             this.pageSize = rowBounds[1];
+            //根据便宜量和limit来计算页码
             this.pageNum = rowBounds[1] != 0 ? (int) (Math.ceil(((double) rowBounds[0] + rowBounds[1]) / rowBounds[1])) : 0;
         }
         this.startRow = rowBounds[0];
@@ -131,6 +143,10 @@ public class Page<E> extends ArrayList<E> implements Closeable {
         this.endRow = this.startRow + rowBounds[1];
     }
 
+    /**
+     * 获取分页后的结果数据
+     * @return
+     */
     public List<E> getResult() {
         return this;
     }
@@ -191,6 +207,7 @@ public class Page<E> extends ArrayList<E> implements Closeable {
             pages = 1;
             return;
         }
+        //计算分页的数量
         if (pageSize > 0) {
             pages = (int) (total / pageSize + ((total % pageSize == 0) ? 0 : 1));
         } else {
@@ -253,6 +270,7 @@ public class Page<E> extends ArrayList<E> implements Closeable {
      * 计算起止行号
      */
     private void calculateStartAndEndRow() {
+        //计算没一页的起止行数
         this.startRow = this.pageNum > 0 ? (this.pageNum - 1) * this.pageSize : 0;
         this.endRow = this.startRow + this.pageSize * (this.pageNum > 0 ? 1 : 0);
     }

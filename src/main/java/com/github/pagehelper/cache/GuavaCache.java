@@ -36,25 +36,29 @@ import java.util.concurrent.TimeUnit;
  * @author liuzh
  */
 public class GuavaCache<K, V> implements Cache<K, V> {
-
+   //google缓存实现
     private final com.google.common.cache.Cache<K, V> CACHE;
 
     public GuavaCache(Properties properties, String prefix) {
         CacheBuilder cacheBuilder = CacheBuilder.newBuilder();
+        //设置缓存的最大数量
         String maximumSize = properties.getProperty(prefix + ".maximumSize");
         if (StringUtil.isNotEmpty(maximumSize)) {
             cacheBuilder.maximumSize(Long.parseLong(maximumSize));
         } else {
             cacheBuilder.maximumSize(1000);
         }
+        //设置读过期时间
         String expireAfterAccess = properties.getProperty(prefix + ".expireAfterAccess");
         if (StringUtil.isNotEmpty(expireAfterAccess)) {
             cacheBuilder.expireAfterAccess(Long.parseLong(expireAfterAccess), TimeUnit.MILLISECONDS);
         }
+        //设置写过期时间
         String expireAfterWrite = properties.getProperty(prefix + ".expireAfterWrite");
         if (StringUtil.isNotEmpty(expireAfterWrite)) {
             cacheBuilder.expireAfterWrite(Long.parseLong(expireAfterWrite), TimeUnit.MILLISECONDS);
         }
+        //舒适化容量
         String initialCapacity = properties.getProperty(prefix + ".initialCapacity");
         if (StringUtil.isNotEmpty(initialCapacity)) {
             cacheBuilder.initialCapacity(Integer.parseInt(initialCapacity));
