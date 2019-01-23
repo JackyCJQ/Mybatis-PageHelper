@@ -41,10 +41,6 @@ import java.util.Properties;
 
 /**
  * Mybatis - 通用分页拦截器<br/>
- * 项目地址 : http://git.oschina.net/free/Mybatis_PageHelper
- *
- * @author liuzh/abel533/isea533
- * @version 5.0.0
  */
 public class PageHelper extends PageMethod implements Dialect {
     private PageParams pageParams;
@@ -125,6 +121,7 @@ public class PageHelper extends PageMethod implements Dialect {
 
     @Override
     public void setProperties(Properties properties) {
+        //在设置属性的时候进行了初始化
         setStaticProperties(properties);
         pageParams = new PageParams();
         autoDialect = new PageAutoDialect();

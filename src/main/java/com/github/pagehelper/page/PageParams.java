@@ -61,6 +61,7 @@ public class PageParams {
      * @return
      */
     public Page getPage(Object parameterObject, RowBounds rowBounds) {
+        //通过threadLocal来解决的
         Page page = PageHelper.getLocalPage();
         if (page == null) {
             if (rowBounds != RowBounds.DEFAULT) {

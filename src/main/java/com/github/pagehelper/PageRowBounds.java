@@ -27,10 +27,13 @@ package com.github.pagehelper;
 import org.apache.ibatis.session.RowBounds;
 
 /**
+ * 对于Mybatis的逻辑缓存进行了扩展
  * @author liuzenghui
  */
 public class PageRowBounds extends RowBounds {
+    //逻辑分页的数据总量
     private Long total;
+    //在查询的时候是否需要进行汇总
     private Boolean count;
 
     public PageRowBounds(int offset, int limit) {

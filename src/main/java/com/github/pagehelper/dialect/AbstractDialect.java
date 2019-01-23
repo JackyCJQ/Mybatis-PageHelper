@@ -44,6 +44,15 @@ public abstract class AbstractDialect implements Dialect {
     //处理SQL
     protected CountSqlParser countSqlParser = new CountSqlParser();
 
+    /**
+     * 处理了统一的汇总
+     * @param ms              MappedStatement
+     * @param boundSql        绑定 SQL 对象
+     * @param parameterObject 方法参数
+     * @param rowBounds       分页参数
+     * @param countKey        count 缓存 key
+     * @return
+     */
     @Override
     public String getCountSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, RowBounds rowBounds, CacheKey countKey) {
         return countSqlParser.getSmartCountSql(boundSql.getSql());

@@ -38,6 +38,7 @@ import java.util.Properties;
 public abstract class PageMethod {
     //通过ThreadLocal来解决冲突的吗？
     protected static final ThreadLocal<Page> LOCAL_PAGE = new ThreadLocal<Page>();
+    //默认是需要计数的
     protected static boolean DEFAULT_COUNT = true;
 
     /**

@@ -44,13 +44,8 @@ import java.util.Properties;
 
 /**
  * Mybatis - 通用分页拦截器
- * <p>
- * GitHub: https://github.com/pagehelper/Mybatis-PageHelper
- * <p>
- * Gitee : https://gitee.com/free/Mybatis_PageHelper
  *
- * @author liuzh/abel533/isea533
- * @version 5.0.0
+ * 拦截mybatis的两个核心查询语句
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Intercepts(
@@ -60,19 +55,24 @@ import java.util.Properties;
         }
 )
 public class PageInterceptor implements Interceptor {
+    //只保证了可见性
     private volatile Dialect dialect;
     private String countSuffix = "_COUNT";
+    //对于已经生成的语句，进行了缓存
     protected Cache<String, MappedStatement> msCountMap = null;
+    //默认的分页实现
     private String default_dialect_class = "com.github.pagehelper.PageHelper";
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         try {
+            //方法执行的参数
             Object[] args = invocation.getArgs();
             MappedStatement ms = (MappedStatement) args[0];
             Object parameter = args[1];
             RowBounds rowBounds = (RowBounds) args[2];
             ResultHandler resultHandler = (ResultHandler) args[3];
+            //获取原执行对象
             Executor executor = (Executor) invocation.getTarget();
             CacheKey cacheKey;
             BoundSql boundSql;
@@ -87,7 +87,7 @@ public class PageInterceptor implements Interceptor {
                 boundSql = (BoundSql) args[5];
             }
             checkDialectExists();
-
+            //对于返回结果的存放
             List resultList;
             //调用方法判断是否需要进行分页，如果不需要，直接返回结果
             if (!dialect.skip(ms, parameter, rowBounds)) {
@@ -101,6 +101,7 @@ public class PageInterceptor implements Interceptor {
                         return dialect.afterPage(new ArrayList(), parameter, rowBounds);
                     }
                 }
+                //进行分页查询
                 resultList = ExecutorUtil.pageQuery(dialect, executor,
                         ms, parameter, rowBounds, resultHandler, boundSql, cacheKey);
             } else {
@@ -131,11 +132,13 @@ public class PageInterceptor implements Interceptor {
     private Long count(Executor executor, MappedStatement ms, Object parameter,
                        RowBounds rowBounds, ResultHandler resultHandler,
                        BoundSql boundSql) throws SQLException {
+        //创建一个新的StatementId
         String countMsId = ms.getId() + countSuffix;
         Long count;
         //先判断是否存在手写的 count 查询
         MappedStatement countMs = ExecutorUtil.getExistedMappedStatement(ms.getConfiguration(), countMsId);
         if (countMs != null) {
+             //如果存在手写的count 语句，就是用用户手写的sql
             count = ExecutorUtil.executeManualCount(executor, countMs, parameter, boundSql, resultHandler);
         } else {
             countMs = msCountMap.get(countMsId);
@@ -145,6 +148,7 @@ public class PageInterceptor implements Interceptor {
                 countMs = MSUtils.newCountMappedStatement(ms, countMsId);
                 msCountMap.put(countMsId, countMs);
             }
+            //执行自动生成的sql
             count = ExecutorUtil.executeAutoCount(dialect, executor, countMs, parameter, boundSql, rowBounds, resultHandler);
         }
         return count;
@@ -164,6 +168,7 @@ public class PageInterceptor implements Interceptor {
             dialectClass = default_dialect_class;
         }
         try {
+            //dialect在这里进行了初始化,调用无惨的构造函数
             Class<?> aClass = Class.forName(dialectClass);
             dialect = (Dialect) aClass.newInstance();
         } catch (Exception e) {

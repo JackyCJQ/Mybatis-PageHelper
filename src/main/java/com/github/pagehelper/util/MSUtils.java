@@ -48,6 +48,7 @@ public class MSUtils {
      * @return
      */
     public static MappedStatement newCountMappedStatement(MappedStatement ms, String newMsId) {
+        //重新构建加入count
         MappedStatement.Builder builder = new MappedStatement.Builder(ms.getConfiguration(), newMsId, ms.getSqlSource(), ms.getSqlCommandType());
         builder.resource(ms.getResource());
         builder.fetchSize(ms.getFetchSize());
